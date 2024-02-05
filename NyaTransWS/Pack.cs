@@ -10,29 +10,44 @@ public class Pack
         TextMessage = textMessage;
     }
 
-    public Pack(string fileName, byte[] file)
+    public Pack(SingleFile file)
     {
         Type = MessageType.File;
         File = file;
-        FileName = fileName;
+    }
+
+    public Pack(List<SingleFile> files)
+    {
+        Type = MessageType.Files;
+        Files = files;
     }
 
     public Pack()
     {
         Type = MessageType.None;
-        TextMessage = string.Empty;
-        File = new byte[0];
-        FileName = string.Empty;
     }
 
     public MessageType Type { get; set; }
-    public string TextMessage { get; set; }
-    public byte[] File { get; set; }
-    public string FileName { get; set; }
+
+    public string? TextMessage { get; set; }
+
+
+    // public List<byte[]> Files { get; set; }
+    public List<SingleFile>? Files { get; set; }
+    public SingleFile? File { get; set; }
 
     public static Pack JtoP(string json)
     {
-        return JsonConvert.DeserializeObject<Pack>(json);
+        try
+        {
+            var pack = JsonConvert.DeserializeObject<Pack>(json);
+            return pack ?? new Pack();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return new Pack();
+        }
     }
 
     public static string PtoJ(Pack pack)

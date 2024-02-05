@@ -12,7 +12,7 @@ public class WsServer : WsBase
     public IWebSocketConnection SharedWs { set; get; }
 
 
-    public async Task StartServer(int port)
+    public async Task Start(int port)
     {
         try
         {
@@ -39,10 +39,13 @@ public class WsServer : WsBase
                         switch (pack!.Type)
                         {
                             case MessageType.File:
-                                Task.Run(() => ReceiveFile(pack.FileName, pack.File!));
+                                Task.Run(() => SaveFile(pack.File!));
                                 break;
                             case MessageType.Text:
-                                Task.Run(() => ReceiveMessage(pack.TextMessage));
+                                Task.Run(() => SaveMessage(pack.TextMessage!));
+                                break;
+                            case MessageType.Files:
+                                Task.Run(() => SaveFiles(pack.Files!));
                                 break;
                         }
                     };
@@ -64,46 +67,16 @@ public class WsServer : WsBase
         }
     }
 
-    public async Task StopServer()
+    public override async Task Stop()
     {
         SharedWs.Close();
         Status = Status.Unconed;
         UpdateStatusDel?.Invoke(Status.Unconed);
     }
 
-    public async Task ReceiveMessage(string message)
-    {
-        Console.WriteLine("Received: " + message);
-        var messagePath = Path.Combine(Application.StartupPath, "Trans-Data", "messages.txt");
-        using var sw = new StreamWriter(messagePath, true);
-        var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        var separateLine = new string('-', 20);
-        message = time + "\n" + message + "\n" + separateLine;
-        await sw.WriteLineAsync(message);
-    }
 
-    public async Task ReceiveFile(string fileName, byte[] bytes)
+    protected override async Task Send(string json)
     {
-        var filePath = Path.Combine(Application.StartupPath, fileName);
-        await File.WriteAllBytesAsync(filePath, bytes);
-    }
-
-    public async Task SendMessage(string message)
-    {
-        var pack = new Pack(message);
-        var json = Pack.PtoJ(pack);
-        await SharedWs.Send(json);
-    }
-
-    /// TODO
-    /// 1. Read file
-    /// 2. Turn to byte[] and pack
-    /// 3. Send file
-    public async Task SendFile(string filePath)
-    {
-        var file = await File.ReadAllBytesAsync(filePath);
-        var pack = new Pack(Path.GetFileName(filePath), file);
-        var json = Pack.PtoJ(pack);
         await SharedWs.Send(json);
     }
 }

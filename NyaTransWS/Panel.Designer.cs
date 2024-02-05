@@ -34,18 +34,22 @@
             this.connect_status = new System.Windows.Forms.Label();
             this.open_data_root = new System.Windows.Forms.Button();
             this.type = new System.Windows.Forms.ComboBox();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.selectSendFile = new System.Windows.Forms.OpenFileDialog();
             this.message_panel = new System.Windows.Forms.TabControl();
             this.message_page = new System.Windows.Forms.TabPage();
             this.message_textbox = new System.Windows.Forms.TextBox();
             this.file_page = new System.Windows.Forms.TabPage();
+            this.selectedFileListView = new System.Windows.Forms.ListView();
+            this.select_files_button = new System.Windows.Forms.Button();
             this.choose_mode = new System.Windows.Forms.GroupBox();
             this.Text_radio = new System.Windows.Forms.RadioButton();
             this.file_radio = new System.Windows.Forms.RadioButton();
             this.send_message = new System.Windows.Forms.Button();
             this.disconnect_btn = new System.Windows.Forms.Button();
+            this.selected_files = new System.Windows.Forms.Label();
             this.message_panel.SuspendLayout();
             this.message_page.SuspendLayout();
+            this.file_page.SuspendLayout();
             this.choose_mode.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,9 +112,10 @@
             this.type.Size = new System.Drawing.Size(180, 32);
             this.type.TabIndex = 5;
             // 
-            // openFileDialog1
+            // selectSendFile
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.selectSendFile.FileName = "selectSendFile";
+            this.selectSendFile.Multiselect = true;
             // 
             // message_panel
             // 
@@ -146,6 +151,9 @@
             // 
             // file_page
             // 
+            this.file_page.Controls.Add(this.selected_files);
+            this.file_page.Controls.Add(this.selectedFileListView);
+            this.file_page.Controls.Add(this.select_files_button);
             this.file_page.Location = new System.Drawing.Point(4, 33);
             this.file_page.Name = "file_page";
             this.file_page.Padding = new System.Windows.Forms.Padding(3);
@@ -153,6 +161,25 @@
             this.file_page.TabIndex = 0;
             this.file_page.Text = "File";
             this.file_page.UseVisualStyleBackColor = true;
+            // 
+            // selectedFileListView
+            // 
+            this.selectedFileListView.Location = new System.Drawing.Point(9, 39);
+            this.selectedFileListView.Name = "selectedFileListView";
+            this.selectedFileListView.Size = new System.Drawing.Size(618, 197);
+            this.selectedFileListView.TabIndex = 1;
+            this.selectedFileListView.UseCompatibleStateImageBehavior = false;
+            this.selectedFileListView.View = System.Windows.Forms.View.List;
+            // 
+            // select_files_button
+            // 
+            this.select_files_button.Location = new System.Drawing.Point(633, 203);
+            this.select_files_button.Name = "select_files_button";
+            this.select_files_button.Size = new System.Drawing.Size(129, 33);
+            this.select_files_button.TabIndex = 0;
+            this.select_files_button.Text = "Select Files";
+            this.select_files_button.UseVisualStyleBackColor = true;
+            this.select_files_button.Click += new System.EventHandler(this.select_file);
             // 
             // choose_mode
             // 
@@ -207,6 +234,15 @@
             this.disconnect_btn.UseVisualStyleBackColor = true;
             this.disconnect_btn.Click += new System.EventHandler(this.disconnect_btn_Click);
             // 
+            // selected_files
+            // 
+            this.selected_files.AutoSize = true;
+            this.selected_files.Location = new System.Drawing.Point(9, 12);
+            this.selected_files.Name = "selected_files";
+            this.selected_files.Size = new System.Drawing.Size(126, 24);
+            this.selected_files.TabIndex = 2;
+            this.selected_files.Text = "Selected Files";
+            // 
             // Panel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -227,6 +263,8 @@
             this.message_panel.ResumeLayout(false);
             this.message_page.ResumeLayout(false);
             this.message_page.PerformLayout();
+            this.file_page.ResumeLayout(false);
+            this.file_page.PerformLayout();
             this.choose_mode.ResumeLayout(false);
             this.choose_mode.PerformLayout();
             this.ResumeLayout(false);
@@ -242,7 +280,7 @@
         private Label connect_status;
         private Button open_data_root;
         private ComboBox type;
-        private OpenFileDialog openFileDialog1;
+        private OpenFileDialog selectSendFile;
         private TabControl message_panel;
         private TabPage file_page;
         private TabPage message_page;
@@ -252,5 +290,8 @@
         private RadioButton Text_radio;
         private RadioButton file_radio;
         private Button disconnect_btn;
+        private Button select_files_button;
+        private ListView selectedFileListView;
+        private Label selected_files;
     }
 }

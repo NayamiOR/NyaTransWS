@@ -6,5 +6,5 @@ public enum Status
     Unconed,
     Coned2Server,
     Coned2Client,
-    ServerStarted, 
+    ServerStarted
 }

@@ -4,9 +4,9 @@ namespace NyaTransWS;
 
 public class WsClient : WsBase
 {
-    public WebSocket SharedWs { set; get; }
+    private WebSocket SharedWs { set; get; }
 
-    public async Task ConnectServer(string linkIncludePort)
+    public Task Connect(string linkIncludePort)
     {
         SharedWs = new WebSocket(linkIncludePort);
         SharedWs.OnOpen += (sender, e) =>
@@ -27,61 +27,35 @@ public class WsClient : WsBase
             switch (pack!.Type)
             {
                 case MessageType.File:
-                    Task.Run(() => ReceiveFile(pack.FileName, pack.File!));
+                    // Task.Run(() => ReceiveFile(pack.FileName, pack.File!));
+                    Task.Run(() => SaveFile(pack.File!));
                     break;
                 case MessageType.Text:
-                    Task.Run(() => ReceiveMessage(pack.TextMessage));
+                    Task.Run(() => SaveMessage(pack.TextMessage!));
+                    break;
+                case MessageType.Files:
+                    Task.Run(() => SaveFiles(pack.Files!));
                     break;
             }
         };
         SharedWs.Connect();
         MessageBox.Show("Client connected.");
+        return Task.CompletedTask;
     }
 
-    public async Task StopClient()
+    // public override async Task Stop()
+    public override Task Stop()
     {
         SharedWs.Close();
         Status = Status.Unconed;
         UpdateStatusDel?.Invoke(Status.Unconed);
         MessageBox.Show("Client disconnected.");
+        return Task.CompletedTask;
     }
 
-    public async Task ReceiveMessage(string message)
+    protected override Task Send(string json)
     {
-        Console.WriteLine("Received: " + message);
-        var messagePath = Path.Combine(Application.StartupPath, "Trans-Data", "messages.txt");
-        using var sw = new StreamWriter(messagePath, true);
-        var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        var separateLine = new string('-', 20);
-        message = time + "\n" + message + "\n" + separateLine;
-        await sw.WriteLineAsync(message);
-    }
-
-    public async Task ReceiveFile(string fileName, byte[] bytes)
-    {
-        var filePath = Path.Combine(Application.StartupPath, fileName);
-        await File.WriteAllBytesAsync(filePath, bytes);
-    }
-
-    public async Task SendMessage(string message)
-    {
-        // TODO
-        var pack = new Pack(message);
-        var json = Pack.PtoJ(pack);
         SharedWs.Send(json);
-    }
-
-    public async Task SendFile(string filePath)
-    {
-        // TODO
-        var file = await File.ReadAllBytesAsync(filePath);
-        var pack = new Pack(Path.GetFileName(filePath), file);
-        var json = Pack.PtoJ(pack);
-        SharedWs.Send(json);
-    }
-
-    public async Task SendBytes(byte[] bytes)
-    {
-        // TODO
+        return Task.CompletedTask;
     }
 }
