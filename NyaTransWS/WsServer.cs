@@ -9,7 +9,7 @@ public class WsServer : WsBase
         Status = Status.Unconed;
     }
 
-    public IWebSocketConnection SharedWs { set; get; }
+    private IWebSocketConnection SharedWs { set; get; }
 
 
     public async Task Start(int port)
@@ -25,18 +25,20 @@ public class WsServer : WsBase
                     SharedWs = socket;
                     socket.OnOpen = () =>
                     {
-                        Console.WriteLine("Open!");
+                        Console.WriteLine(@"Open!");
+                        Status = Status.Coned2Client;
                         UpdateStatusDel?.Invoke(Status.Coned2Client);
                     };
                     socket.OnClose = () =>
                     {
-                        Console.WriteLine("Close!");
+                        Console.WriteLine(@"Close!");
                         UpdateStatusDel?.Invoke(Status.ServerStarted);
+                        Status = Status.ServerStarted;
                     };
                     socket.OnMessage = message =>
                     {
                         var pack = Pack.JtoP(message);
-                        switch (pack!.Type)
+                        switch (pack.Type)
                         {
                             case MessageType.File:
                                 Task.Run(() => SaveFile(pack.File!));
@@ -47,31 +49,37 @@ public class WsServer : WsBase
                             case MessageType.Files:
                                 Task.Run(() => SaveFiles(pack.Files!));
                                 break;
+                            case MessageType.Acknowledgement:
+                                Console.WriteLine(@"Acknowledgement received.");
+                                MessageBox.Show(@"Pack sent successfully.");
+                                break;
                         }
                     };
                 });
 
-                Console.WriteLine("Server started.");
+                Console.WriteLine(@"Server started.");
                 Status = Status.ServerStarted;
                 UpdateStatusDel?.Invoke(Status.ServerStarted);
                 // 在应用程序关闭时释放资源
-                AppDomain.CurrentDomain.ProcessExit += (sender, e) => server.Dispose();
+                AppDomain.CurrentDomain.DomainUnload += (_, _) => server.Dispose();
             });
 
-            MessageBox.Show("Server started.");
+            MessageBox.Show(@"Server started.");
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to start server. Error: {ex.Message}", "Error", MessageBoxButtons.OK,
+            MessageBox.Show($@"Failed to start server. Error: {ex.Message}", @"Error", MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
     }
 
-    public override async Task Stop()
+    public override Task Stop()
     {
+        if (Status == Status.Unconed) return Task.CompletedTask;
         SharedWs.Close();
         Status = Status.Unconed;
         UpdateStatusDel?.Invoke(Status.Unconed);
+        return Task.CompletedTask;
     }
 
 

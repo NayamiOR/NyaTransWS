@@ -22,6 +22,11 @@ public class Pack
         Files = files;
     }
 
+    public Pack(MessageType type)
+    {
+        Type = type;
+    }
+
     public Pack()
     {
         Type = MessageType.None;
@@ -45,7 +50,7 @@ public class Pack
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error: " + e.Message);
+            Console.WriteLine(@"Error: " + e.Message);
             return new Pack();
         }
     }

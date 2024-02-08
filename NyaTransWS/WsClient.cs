@@ -9,22 +9,23 @@ public class WsClient : WsBase
     public Task Connect(string linkIncludePort)
     {
         SharedWs = new WebSocket(linkIncludePort);
-        SharedWs.OnOpen += (sender, e) =>
+        SharedWs.OnOpen += (_, _) =>
         {
-            Console.WriteLine("Open!");
+            Console.WriteLine(@"Open!");
             UpdateStatusDel?.Invoke(Status.Coned2Server);
             Status = Status.Coned2Server;
+            MessageBox.Show(@"Client connected.");
         };
-        SharedWs.OnClose += (sender, e) =>
+        SharedWs.OnClose += (_, _) =>
         {
-            Console.WriteLine("Close!");
+            Console.WriteLine(@"Close!");
             UpdateStatusDel?.Invoke(Status.Unconed);
             Status = Status.Unconed;
         };
-        SharedWs.OnMessage += (sender, e) =>
+        SharedWs.OnMessage += (_, e) =>
         {
             var pack = Pack.JtoP(e.Data);
-            switch (pack!.Type)
+            switch (pack.Type)
             {
                 case MessageType.File:
                     // Task.Run(() => ReceiveFile(pack.FileName, pack.File!));
@@ -36,10 +37,23 @@ public class WsClient : WsBase
                 case MessageType.Files:
                     Task.Run(() => SaveFiles(pack.Files!));
                     break;
+                case MessageType.Acknowledgement:
+                    Console.WriteLine(@"Acknowledgement received.");
+                    MessageBox.Show(@"Pack sent successfully.");
+                    break;
             }
         };
-        SharedWs.Connect();
-        MessageBox.Show("Client connected.");
+        // SharedWs.Connect();
+        try
+        {
+            SharedWs.Connect();
+        }
+        catch (Exception e)
+        {
+            // 连接异常处理
+            Console.WriteLine(@"连接异常:" + e.Message);
+        }
+
         return Task.CompletedTask;
     }
 
@@ -49,7 +63,7 @@ public class WsClient : WsBase
         SharedWs.Close();
         Status = Status.Unconed;
         UpdateStatusDel?.Invoke(Status.Unconed);
-        MessageBox.Show("Client disconnected.");
+        MessageBox.Show(@"Client disconnected.");
         return Task.CompletedTask;
     }
 

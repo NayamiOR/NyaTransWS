@@ -1,6 +1,6 @@
 ﻿namespace NyaTransWS;
 
-public class Utils
+public static class Utils
 {
     public static void CreateDirectory(string path)
     {
@@ -14,7 +14,7 @@ public class Utils
 
     public static void Initialize()
     {
-        var root = Path.Combine(Application.StartupPath, "Trans-Data");
+        var root = Path.Combine(Panel.Root, "Trans-Data");
 
         // Delete the directory if it exists.
         // if (Directory.Exists(root)) Directory.Delete(root, true);

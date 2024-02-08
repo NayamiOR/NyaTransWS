@@ -7,29 +7,43 @@ public class WsBase
     public UpdateStatusDelegate? UpdateStatusDel { set; get; }
     public Status Status { get; set; }
 
-    protected async Task SaveFile(SingleFile file)
+    private static async Task Save(SingleFile file)
     {
-        var root = Path.Combine(Application.StartupPath, "Trans-Data", "files");
+        var root = Path.Combine(Panel.Root, "Trans-Data", "files");
         var filePath = Path.Combine(root, file.FileName);
         var bytes = file.File;
 
         await File.WriteAllBytesAsync(filePath, bytes);
     }
 
+    protected async Task SaveFile(SingleFile file)
+    {
+        Console.WriteLine(@"Received File: " + file.FileName);
+        MessageBox.Show(@"File received: " + file.FileName);
+        await Save(file);
+        await SendAcknowledgement();
+    }
+
     protected async Task SaveFiles(List<SingleFile> files)
     {
-        foreach (var file in files) await SaveFile(file);
+        // foreach (var file in files) await SaveFile(file);
+        Console.WriteLine($@"Received{files.Count} files.");
+        MessageBox.Show($@"Received{files.Count} files.");
+        foreach (var file in files) await Save(file);
+        await SendAcknowledgement();
     }
 
     public async Task SaveMessage(string message)
     {
         Console.WriteLine(@"Received: " + message);
-        var messagePath = Path.Combine(Application.StartupPath, "Trans-Data", "messages.txt");
+        MessageBox.Show(@"Text message received: " + message);
+        var messagePath = Path.Combine(Panel.Root, "Trans-Data", "messages.txt");
         await using var sw = new StreamWriter(messagePath, true);
         var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         var separateLine = new string('-', 20);
         message = time + "\n" + message + "\n" + separateLine;
         await sw.WriteLineAsync(message);
+        await SendAcknowledgement();
     }
 
     protected virtual Task Send(string json)
@@ -64,6 +78,13 @@ public class WsBase
     public async Task SendMessage(string message)
     {
         var pack = new Pack(message);
+        var json = Pack.PtoJ(pack);
+        await Send(json);
+    }
+
+    private async Task SendAcknowledgement()
+    {
+        var pack = new Pack(MessageType.Acknowledgement);
         var json = Pack.PtoJ(pack);
         await Send(json);
     }

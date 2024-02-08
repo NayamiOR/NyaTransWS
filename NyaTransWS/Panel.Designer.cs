@@ -39,6 +39,7 @@
             this.message_page = new System.Windows.Forms.TabPage();
             this.message_textbox = new System.Windows.Forms.TextBox();
             this.file_page = new System.Windows.Forms.TabPage();
+            this.selected_files = new System.Windows.Forms.Label();
             this.selectedFileListView = new System.Windows.Forms.ListView();
             this.select_files_button = new System.Windows.Forms.Button();
             this.choose_mode = new System.Windows.Forms.GroupBox();
@@ -46,7 +47,9 @@
             this.file_radio = new System.Windows.Forms.RadioButton();
             this.send_message = new System.Windows.Forms.Button();
             this.disconnect_btn = new System.Windows.Forms.Button();
-            this.selected_files = new System.Windows.Forms.Label();
+            this.empty_data_root = new System.Windows.Forms.Button();
+            this.change_root = new System.Windows.Forms.Button();
+            this.selectRoot = new System.Windows.Forms.FolderBrowserDialog();
             this.message_panel.SuspendLayout();
             this.message_page.SuspendLayout();
             this.file_page.SuspendLayout();
@@ -64,7 +67,7 @@
             // 
             // link
             // 
-            this.link.Location = new System.Drawing.Point(198, 48);
+            this.link.Location = new System.Drawing.Point(204, 68);
             this.link.Name = "link";
             this.link.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.link.Size = new System.Drawing.Size(201, 30);
@@ -73,7 +76,7 @@
             // 
             // connect_btn
             // 
-            this.connect_btn.Location = new System.Drawing.Point(405, 46);
+            this.connect_btn.Location = new System.Drawing.Point(411, 66);
             this.connect_btn.Name = "connect_btn";
             this.connect_btn.Size = new System.Drawing.Size(112, 34);
             this.connect_btn.TabIndex = 2;
@@ -85,7 +88,7 @@
             // 
             this.connect_status.AutoSize = true;
             this.connect_status.ForeColor = System.Drawing.Color.Red;
-            this.connect_status.Location = new System.Drawing.Point(660, 51);
+            this.connect_status.Location = new System.Drawing.Point(666, 71);
             this.connect_status.Name = "connect_status";
             this.connect_status.Size = new System.Drawing.Size(124, 24);
             this.connect_status.TabIndex = 3;
@@ -93,7 +96,7 @@
             // 
             // open_data_root
             // 
-            this.open_data_root.Location = new System.Drawing.Point(676, 9);
+            this.open_data_root.Location = new System.Drawing.Point(542, 9);
             this.open_data_root.Name = "open_data_root";
             this.open_data_root.Size = new System.Drawing.Size(112, 34);
             this.open_data_root.TabIndex = 4;
@@ -107,7 +110,7 @@
             this.type.Items.AddRange(new object[] {
             "Server",
             "Client"});
-            this.type.Location = new System.Drawing.Point(12, 46);
+            this.type.Location = new System.Drawing.Point(18, 66);
             this.type.Name = "type";
             this.type.Size = new System.Drawing.Size(180, 32);
             this.type.TabIndex = 5;
@@ -121,10 +124,10 @@
             // 
             this.message_panel.Controls.Add(this.message_page);
             this.message_panel.Controls.Add(this.file_page);
-            this.message_panel.Location = new System.Drawing.Point(12, 84);
+            this.message_panel.Location = new System.Drawing.Point(18, 104);
             this.message_panel.Name = "message_panel";
             this.message_panel.SelectedIndex = 0;
-            this.message_panel.Size = new System.Drawing.Size(776, 279);
+            this.message_panel.Size = new System.Drawing.Size(915, 279);
             this.message_panel.TabIndex = 6;
             this.message_panel.Tag = "";
             // 
@@ -134,7 +137,7 @@
             this.message_page.Location = new System.Drawing.Point(4, 33);
             this.message_page.Name = "message_page";
             this.message_page.Padding = new System.Windows.Forms.Padding(3);
-            this.message_page.Size = new System.Drawing.Size(768, 242);
+            this.message_page.Size = new System.Drawing.Size(907, 242);
             this.message_page.TabIndex = 1;
             this.message_page.Text = "Message";
             this.message_page.UseVisualStyleBackColor = true;
@@ -146,7 +149,7 @@
             this.message_textbox.Multiline = true;
             this.message_textbox.Name = "message_textbox";
             this.message_textbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.message_textbox.Size = new System.Drawing.Size(762, 236);
+            this.message_textbox.Size = new System.Drawing.Size(901, 236);
             this.message_textbox.TabIndex = 0;
             // 
             // file_page
@@ -157,10 +160,19 @@
             this.file_page.Location = new System.Drawing.Point(4, 33);
             this.file_page.Name = "file_page";
             this.file_page.Padding = new System.Windows.Forms.Padding(3);
-            this.file_page.Size = new System.Drawing.Size(768, 242);
+            this.file_page.Size = new System.Drawing.Size(907, 242);
             this.file_page.TabIndex = 0;
             this.file_page.Text = "File";
             this.file_page.UseVisualStyleBackColor = true;
+            // 
+            // selected_files
+            // 
+            this.selected_files.AutoSize = true;
+            this.selected_files.Location = new System.Drawing.Point(9, 12);
+            this.selected_files.Name = "selected_files";
+            this.selected_files.Size = new System.Drawing.Size(126, 24);
+            this.selected_files.TabIndex = 2;
+            this.selected_files.Text = "Selected Files";
             // 
             // selectedFileListView
             // 
@@ -185,7 +197,7 @@
             // 
             this.choose_mode.Controls.Add(this.Text_radio);
             this.choose_mode.Controls.Add(this.file_radio);
-            this.choose_mode.Location = new System.Drawing.Point(19, 369);
+            this.choose_mode.Location = new System.Drawing.Point(25, 389);
             this.choose_mode.Name = "choose_mode";
             this.choose_mode.Size = new System.Drawing.Size(330, 69);
             this.choose_mode.TabIndex = 10;
@@ -216,7 +228,7 @@
             // 
             // send_message
             // 
-            this.send_message.Location = new System.Drawing.Point(375, 392);
+            this.send_message.Location = new System.Drawing.Point(381, 412);
             this.send_message.Name = "send_message";
             this.send_message.Size = new System.Drawing.Size(112, 34);
             this.send_message.TabIndex = 7;
@@ -226,7 +238,7 @@
             // 
             // disconnect_btn
             // 
-            this.disconnect_btn.Location = new System.Drawing.Point(523, 46);
+            this.disconnect_btn.Location = new System.Drawing.Point(529, 66);
             this.disconnect_btn.Name = "disconnect_btn";
             this.disconnect_btn.Size = new System.Drawing.Size(131, 34);
             this.disconnect_btn.TabIndex = 11;
@@ -234,20 +246,37 @@
             this.disconnect_btn.UseVisualStyleBackColor = true;
             this.disconnect_btn.Click += new System.EventHandler(this.disconnect_btn_Click);
             // 
-            // selected_files
+            // empty_data_root
             // 
-            this.selected_files.AutoSize = true;
-            this.selected_files.Location = new System.Drawing.Point(9, 12);
-            this.selected_files.Name = "selected_files";
-            this.selected_files.Size = new System.Drawing.Size(126, 24);
-            this.selected_files.TabIndex = 2;
-            this.selected_files.Text = "Selected Files";
+            this.empty_data_root.Location = new System.Drawing.Point(660, 9);
+            this.empty_data_root.Name = "empty_data_root";
+            this.empty_data_root.Size = new System.Drawing.Size(128, 34);
+            this.empty_data_root.TabIndex = 12;
+            this.empty_data_root.Text = "Empty Root";
+            this.empty_data_root.UseVisualStyleBackColor = true;
+            this.empty_data_root.Click += new System.EventHandler(this.empty_data_root_Click);
+            // 
+            // change_root
+            // 
+            this.change_root.Location = new System.Drawing.Point(794, 9);
+            this.change_root.Name = "change_root";
+            this.change_root.Size = new System.Drawing.Size(133, 34);
+            this.change_root.TabIndex = 13;
+            this.change_root.Text = "Change Root";
+            this.change_root.UseVisualStyleBackColor = true;
+            this.change_root.Click += new System.EventHandler(this.change_root_Click);
+            // 
+            // selectRoot
+            // 
+            this.selectRoot.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
             // Panel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(939, 473);
+            this.Controls.Add(this.change_root);
+            this.Controls.Add(this.empty_data_root);
             this.Controls.Add(this.disconnect_btn);
             this.Controls.Add(this.choose_mode);
             this.Controls.Add(this.send_message);
@@ -260,6 +289,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Panel";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Panel_FormClosing);
             this.message_panel.ResumeLayout(false);
             this.message_page.ResumeLayout(false);
             this.message_page.PerformLayout();
@@ -293,5 +323,8 @@
         private Button select_files_button;
         private ListView selectedFileListView;
         private Label selected_files;
+        private Button empty_data_root;
+        private Button change_root;
+        private FolderBrowserDialog selectRoot;
     }
 }
